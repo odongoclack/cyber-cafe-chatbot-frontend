@@ -50,12 +50,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Generate unique conversation ID
     setConversationId(`conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   }, []);
 
   useEffect(() => {
-    // Simulate real-time stats updates
     const interval = setInterval(() => {
       setOnlineUsers(prev => Math.max(8, prev + Math.floor(Math.random() * 3) - 1));
       setSystemStats(prev => ({
@@ -68,7 +66,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    // Connection pulse animation
     const pulseInterval = setInterval(() => {
       setConnectionPulse(prev => !prev);
     }, 2000);
@@ -122,7 +119,6 @@ const App = () => {
   const handleNameSubmit = (e) => {
     e.preventDefault();
     if (userName.trim()) {
-      // Check if admin username
       if (userName.toLowerCase() === 'edwin123' || userName.toLowerCase() === 'clacks123') {
         setShowAdminLogin(true);
         return;
@@ -156,14 +152,12 @@ const App = () => {
     setInputMessage('');
     setIsTyping(true);
 
-    // Check for admin dashboard command
     if (isAdmin && currentMessage.toLowerCase().includes('admin dashboard')) {
       await fetchAdminDashboard();
       setIsTyping(false);
       return;
     }
 
-    // API call to FastAPI backend
     try {
       const response = await fetch('http://localhost:8000/api/chat', {
         method: 'POST',
@@ -281,7 +275,6 @@ const App = () => {
       background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #667eea 100%)',
       fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
     }}>
-      {/* Advanced Animated Background */}
       <div className="position-absolute w-100 h-100 overflow-hidden" style={{zIndex: -1}}>
         <div className="position-absolute rounded-circle" 
              style={{
@@ -313,7 +306,6 @@ const App = () => {
              }}></div>
       </div>
 
-      {/* Admin Login Modal */}
       {showAdminLogin && (
         <div className="modal d-flex align-items-center justify-content-center" 
              style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(15px)', zIndex: 1050}}>
@@ -361,7 +353,6 @@ const App = () => {
         </div>
       )}
 
-      {/* Admin Dashboard Modal */}
       {showAdminDashboard && adminData && (
         <div className="modal d-flex align-items-center justify-content-center" 
              style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(15px)', zIndex: 1050}}>
@@ -456,7 +447,6 @@ const App = () => {
         </div>
       )}
 
-      {/* Enhanced Name Modal */}
       {showNameModal && (
         <div className="modal d-flex align-items-center justify-content-center" 
              style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(15px)', zIndex: 1050}}>
@@ -485,7 +475,6 @@ const App = () => {
               
               <div className="modal-body p-0" style={{background: 'linear-gradient(180deg, #ffffff 0%, #f8f9fa 100%)'}}>
                 <div className="p-4">
-                  {/* Service Icons */}
                   <div className="row mb-4">
                     {services.map((service, index) => (
                       <div key={index} className="col-6 col-md-3 mb-3">
@@ -501,7 +490,6 @@ const App = () => {
                     ))}
                   </div>
 
-                  {/* System Status */}
                   <div className="row mb-4">
                     {systemIndicators.map((indicator, index) => (
                       <div key={index} className="col-4">
@@ -516,7 +504,6 @@ const App = () => {
                     ))}
                   </div>
 
-                  {/* Name Input */}
                   <div className="bg-light rounded-4 p-4">
                     <div className="mb-3">
                       <label className="form-label fw-bold text-dark">What should I call you?</label>
@@ -563,10 +550,8 @@ const App = () => {
         </div>
       )}
 
-      {/* Enhanced Main Chat Interface */}
       <div className="container-fluid h-100 p-0">
         <div className="row h-100 g-0">
-          {/* Enhanced Header */}
           <div className="col-12">
             <nav className="navbar navbar-expand-lg text-white shadow-lg" 
                  style={{background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(25px)', borderBottom: '1px solid rgba(255,255,255,0.2)'}}>
@@ -583,21 +568,20 @@ const App = () => {
                   </div>
                 </div>
                 
-                <div className={`d-flex align-items-center text-white ${isMobile ? 'flex-column' : 'flex-row'}`}>
-                  {/* Mobile: Stack vertically, Desktop: Keep horizontal */}
+                <div className={`d-flex align-items-center ${isMobile ? 'flex-column' : 'flex-row'}`}>
                   <div className={`${isMobile ? 'mb-2' : 'me-4'} d-flex align-items-center bg-white bg-opacity-15 rounded-pill px-3 py-2`}>
                     <div className={`bg-success rounded-circle me-2 ${connectionPulse ? 'pulse-glow' : ''}`} 
                          style={{width: '8px', height: '8px'}}></div>
                     <Users size={isMobile ? 14 : 18} className="me-1" />
-                    <span className={`badge bg-success fw-bold ${isMobile ? 'fs-7' : 'fs-6'}`}>{onlineUsers}</span>
-                    <small className="ms-1 opacity-90" style={{fontSize: isMobile ? '10px' : '12px'}}>online</small>
+                    <span className={`badge bg-success fw-bold ${isMobile ? 'fs-7' : 'fs-6'} text-dark`}>{onlineUsers}</span>
+                    <small className="ms-1 opacity-90 text-dark" style={{fontSize: isMobile ? '10px' : '12px'}}>online</small>
                   </div>
                   
                   {!isMobile && (
                     <>
                       <div className="me-4 d-flex align-items-center bg-white bg-opacity-15 rounded-pill px-3 py-2">
-                        <Wifi size={18} className="me-2" />
-                        <span className="fw-semibold">{isConnected ? 'Connected' : 'Reconnecting...'}</span>
+                        <Wifi size={18} className="me-2 text-dark" />
+                        <span className="fw-semibold text-dark">{isConnected ? 'Connected' : 'Reconnecting...'}</span>
                       </div>
                       
                       <div className="d-flex align-items-center bg-white bg-opacity-15 rounded-pill px-3 py-2">
@@ -609,8 +593,8 @@ const App = () => {
                         ) : (
                           <>
                             <Star size={18} className="me-1 text-warning" />
-                            <span className="fw-bold">4.9</span>
-                            <small className="ms-1 opacity-90">/5</small>
+                            <span className="fw-bold text-dark">4.9</span>
+                            <small className="ms-1 opacity-90 text-dark">/5</small>
                           </>
                         )}
                       </div>
@@ -621,404 +605,188 @@ const App = () => {
             </nav>
           </div>
 
-          {/* Enhanced Chat Area */}
-          <div className="col-12 d-flex flex-column" style={{height: 'calc(100vh - 80px)'}}>
-            {/* Messages Container */}
-            <div className="flex-grow-1 overflow-auto p-4" style={{scrollBehavior: 'smooth'}}>
-              <div className="container-fluid">
-                {/* Enhanced Quick Questions */}
-                {messages.length <= 2 && (
-                  <div className="row mb-5">
-                    <div className="col-12">
-                      <div className="card border-0 shadow-lg" 
-                           style={{
-                             borderRadius: '25px', 
-                             background: 'rgba(255,255,255,0.98)', 
-                             backdropFilter: 'blur(15px)',
-                             border: '1px solid rgba(255,255,255,0.3)'
-                           }}>
-                        <div className="card-body p-4">
-                          <div className="d-flex align-items-center mb-4">
-                            <div className="bg-primary bg-opacity-15 rounded-circle p-2 me-3">
-                              <MessageCircle size={isMobile ? 20 : 24} className="text-primary" />
-                            </div>
-                            <div>
-                              <h5 className={`card-title text-dark mb-1 fw-bold ${isMobile ? 'fs-6' : ''}`}>Quick Actions</h5>
-                              <small className="text-muted" style={{fontSize: isMobile ? '11px' : '14px'}}>Get instant answers to common questions</small>
-                            </div>
-                          </div>
-                          
-                          <div className="row g-3">
-                            {quickQuestions.map((question, index) => (
-                              <div key={index} className={isMobile ? "col-12" : "col-md-6"}>
-                                <button
-                                  className="btn w-100 fw-semibold shadow-sm border-0 d-flex align-items-center justify-content-start p-3"
-                                  style={{
-                                    background: question.gradient,
-                                    color: 'white',
-                                    borderRadius: '20px',
-                                    transition: 'all 0.3s ease',
-                                    fontSize: isMobile ? '13px' : '15px'
-                                  }}
-                                  onClick={() => setInputMessage(question.text)}
-                                  onMouseOver={(e) => e.target.style.transform = 'translateY(-3px) scale(1.02)'}
-                                  onMouseOut={(e) => e.target.style.transform = 'translateY(0) scale(1)'}
-                                >
-                                  <div className="bg-white bg-opacity-25 rounded-circle p-2 me-3">
-                                    {React.cloneElement(question.icon, { size: isMobile ? 14 : 16 })}
-                                  </div>
-                                  <span>{question.text}</span>
-                                </button>
-                              </div>
-                            ))}
-                          </div>
-                          
-                          {isAdmin && (
-                            <div className="mt-4 pt-3 border-top">
-                              <button
-                                className="btn btn-warning w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center"
-                                style={{borderRadius: '15px'}}
-                                onClick={() => setInputMessage('admin dashboard')}
-                              >
-                                <BarChart3 size={20} className="me-2" />
-                                View Admin Dashboard
-                              </button>
-                            </div>
-                          )}
-                        </div>
+          <div className="col-12 d-flex flex-column" style={{ height: 'calc(100vh - 80px)' }}>
+            <div className="flex-grow-1 p-3 overflow-auto" style={{
+              background: 'linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.1) 100%)',
+              backdropFilter: 'blur(10px)',
+              borderTop: '1px solid rgba(255,255,255,0.2)',
+              borderBottom: '1px solid rgba(255,255,255,0.2)',
+              padding: isMobile ? '10px' : '20px'
+            }}>
+              {messages.map(message => (
+                <div key={message.id} className={`d-flex mb-3 ${message.sender === 'user' ? 'justify-content-end' : 'justify-content-start'}`}>
+                  <div className={`d-flex align-items-start ${message.sender === 'user' ? 'flex-row-reverse' : ''}`}>
+                    <div className={`p-3 rounded-4 shadow-sm ${message.sender === 'user' ? 'bg-primary text-white' : 'bg-light text-dark'}`}
+                         style={{
+                           maxWidth: isMobile ? '85%' : '70%',
+                           borderBottomLeftRadius: message.sender === 'user' ? '1.2rem' : '0.3rem',
+                           borderBottomRightRadius: message.sender === 'user' ? '0.3rem' : '1.2rem',
+                           borderTopLeftRadius: '1.2rem',
+                           borderTopRightRadius: '1.2rem'
+                         }}>
+                      <p className="mb-1" dangerouslySetInnerHTML={{ __html: message.text.replace(/\n/g, '<br>') }}></p>
+                      <small className={`d-block text-end opacity-75 ${message.sender === 'user' ? 'text-white' : 'text-muted'}`} style={{fontSize: '0.7em'}}>
+                        {message.timestamp}
+                      </small>
+                    </div>
+                    {message.sender === 'bot' && (
+                      <div className="ms-2">
+                        <Bot size={24} className="text-white" />
+                      </div>
+                    )}
+                    {message.sender === 'user' && (
+                      <div className="me-2">
+                        <User size={24} className="text-white" />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {isTyping && (
+                <div className="d-flex mb-3 justify-content-start">
+                  <div className="d-flex align-items-start">
+                    <div className="p-3 rounded-4 bg-light text-dark shadow-sm"
+                         style={{
+                           maxWidth: isMobile ? '85%' : '70%',
+                           borderBottomLeftRadius: '0.3rem',
+                           borderBottomRightRadius: '1.2rem',
+                           borderTopLeftRadius: '1.2rem',
+                           borderTopRightRadius: '1.2rem'
+                         }}>
+                      <div className="typing-indicator">
+                        <span></span><span></span><span></span>
                       </div>
                     </div>
-                  </div>
-                )}
-
-                {/* Enhanced Messages */}
-                {messages.map((message) => (
-                  <div key={message.id} className={`row mb-4 ${message.sender === 'user' ? 'justify-content-end' : 'justify-content-start'}`}>
-                    <div className={`${isMobile ? 'col-11' : 'col-lg-8 col-md-10'} ${message.sender === 'user' ? 'text-end' : 'text-start'}`}>
-                      <div className={`card border-0 shadow-lg message-card ${message.sender === 'user' ? 'user-message' : 'bot-message'}`}
-                           style={{
-                             borderRadius: isMobile ? '15px' : '25px', 
-                             transition: 'all 0.3s ease',
-                             border: message.sender === 'bot' ? '1px solid rgba(255,255,255,0.3)' : 'none'
-                           }}>
-                        <div className="card-body p-4">
-                          <div className="d-flex align-items-start">
-                            {message.sender === 'bot' && (
-                              <div className="me-3">
-                                <div className="rounded-circle p-3 bot-avatar shadow-sm">
-                                  <Bot size={isMobile ? 18 : 22} className="text-white" />
-                                </div>
-                              </div>
-                            )}
-                            <div className="flex-grow-1">
-                              <div className={`fw-medium ${message.sender === 'user' ? 'text-white' : 'text-dark'}`} 
-                                   style={{fontSize: isMobile ? '14px' : '16px', lineHeight: '1.6', whiteSpace: 'pre-line'}}>
-                                {message.text}
-                              </div>
-                              <div className={`mt-3 d-flex align-items-center ${message.sender === 'user' ? 'text-white-50 justify-content-end' : 'text-muted'}`}>
-                                <Clock size={isMobile ? 12 : 14} className="me-2" />
-                                <small style={{fontSize: isMobile ? '10px' : '12px'}}>{message.timestamp}</small>
-                                {message.sender === 'bot' && !isMobile && (
-                                  <div className="ms-3 d-flex align-items-center">
-                                    <Shield size={14} className="me-1" />
-                                    <small>AI Assistant</small>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            {message.sender === 'user' && (
-                              <div className="ms-3">
-                                <div className="bg-white bg-opacity-25 rounded-circle p-3 shadow-sm">
-                                  <User size={isMobile ? 18 : 22} className="text-white" />
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        </div>
-                      </div>
+                    <div className="ms-2">
+                      <Bot size={24} className="text-white" />
                     </div>
                   </div>
-                ))}
-
-                {/* Enhanced Typing Indicator */}
-                {isTyping && (
-                  <div className="row mb-4">
-                    <div className="col-lg-8 col-md-10">
-                      <div className="card border-0 shadow-lg bot-message" 
-                           style={{borderRadius: '25px', border: '1px solid rgba(255,255,255,0.3)'}}>
-                        <div className="card-body p-4">
-                          <div className="d-flex align-items-start">
-                            <div className="me-3">
-                              <div className="rounded-circle p-3 bot-avatar shadow-sm">
-                                <Bot size={22} className="text-white" />
-                              </div>
-                            </div>
-                            <div className="flex-grow-1">
-                              <div className="typing-indicator-advanced">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                              </div>
-                              <small className="text-muted mt-2 d-block">Wait for response from E-C cyber...</small>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                <div ref={messagesEndRef} />
-              </div>
+                </div>
+              )}
+              <div ref={messagesEndRef} />
             </div>
 
-            {/* Enhanced Input Area */}
-            <div className="p-4" style={{
-              background: 'rgba(255,255,255,0.15)', 
-              backdropFilter: 'blur(25px)',
-              borderTop: '1px solid rgba(255,255,255,0.2)'
-            }}>
-              <div className="container-fluid">
-                <div className="row">
-                  <div className="col-12">
-                    <div className="input-group shadow-lg" style={{borderRadius: isMobile ? '20px' : '30px', overflow: 'hidden'}}>
-                      <input
-                        type="text"
-                        className="form-control form-control-lg border-0 bg-white"
-                        placeholder={isMobile ? "Type message..." : "Type your message here..."}
-                        value={inputMessage}
-                        onChange={(e) => setInputMessage(e.target.value)}
-                        disabled={isTyping}
-                        style={{
-                          paddingLeft: isMobile ? '15px' : '25px', 
-                          paddingRight: isMobile ? '15px' : '25px',
-                          fontSize: isMobile ? '14px' : '16px',
-                          height: isMobile ? '50px' : '60px'
-                        }}
-                        onKeyDown={(e) => e.key === 'Enter' && sendMessage(e)}
-                      />
-                      <button
-                        onClick={sendMessage}
-                        className="btn btn-lg text-white fw-bold border-0"
-                        disabled={isTyping || !inputMessage.trim()}
-                        style={{
-                          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-                          paddingLeft: isMobile ? '20px' : '30px',
-                          paddingRight: isMobile ? '20px' : '30px',
-                          transition: 'all 0.3s ease'
-                        }}
-                        onMouseOver={(e) => !e.target.disabled && (e.target.style.transform = 'scale(1.05)')}
-                        onMouseOut={(e) => e.target.style.transform = 'scale(1)'}
-                      >
-                        {isTyping ? (
-                          <div className="spinner-border spinner-border-sm" role="status">
-                            <span className="visually-hidden">Loading...</span>
-                          </div>
-                        ) : (
-                          <Send size={isMobile ? 18 : 22} />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-                </div>
-                
-                {/* Mobile-responsive Footer Info */}
-                <div className="row mt-3">
-                  <div className={isMobile ? "col-12" : "col-md-4"}>
-                    <small className="text-white d-flex align-items-center opacity-90" style={{fontSize: isMobile ? '10px' : '12px'}}>
-                      <Shield size={isMobile ? 14 : 16} className="me-2" />
-                      End-to-end encrypted
-                    </small>
-                  </div>
-                  {!isMobile && (
-                    <>
-                      <div className="col-md-4 mb-2">
-                        <small className="text-white d-flex align-items-center opacity-90">
-                          <Headphones size={16} className="me-2" />
-                          24/7 AI Support
-                        </small>
-                      </div>
-                      <div className="col-md-4 mb-2">
-                        <small className="text-white d-flex align-items-center opacity-90">
-                          <Zap size={16} className="me-2" />
-                          Instant responses {isAdmin && '(Admin Mode)'}
-                        </small>
-                      </div>
-                    </>
-                  )}
-                </div>
+            <div className="p-3" style={{ background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(25px)', borderTop: '1px solid rgba(255,255,255,0.2)'}}>
+              <div className="d-flex flex-wrap justify-content-center mb-3">
+                {quickQuestions.map((q, index) => (
+                  <button
+                    key={index}
+                    className="btn btn-sm text-white rounded-pill px-3 py-2 m-1 fw-semibold shadow-sm"
+                    style={{
+                      background: q.gradient,
+                      fontSize: isMobile ? '0.75rem' : '0.85rem',
+                      whiteSpace: 'nowrap',
+                      transition: 'transform 0.2s ease',
+                      border: 'none'
+                    }}
+                    onClick={() => setInputMessage(q.text)}
+                    onMouseOver={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
+                    onMouseOut={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                  >
+                    {q.icon} <span className="ms-1">{q.text}</span>
+                  </button>
+                ))}
               </div>
+
+              <form onSubmit={sendMessage} className="d-flex">
+                <div className="input-group">
+                  <input
+                    type="text"
+                    className="form-control form-control-lg rounded-pill shadow-sm border-0 pe-5"
+                    placeholder="Type your message..."
+                    value={inputMessage}
+                    onChange={(e) => setInputMessage(e.target.value)}
+                    disabled={isTyping}
+                    style={{
+                      backgroundColor: 'rgba(255,255,255,0.9)',
+                      color: '#333',
+                      paddingLeft: '1.5rem',
+                      paddingRight: '1.5rem',
+                      fontSize: isMobile ? '1rem' : '1.1rem'
+                    }}
+                  />
+                  <button
+                    type="submit"
+                    className="btn btn-primary rounded-pill position-absolute end-0 h-100 px-4 shadow-sm"
+                    disabled={isTyping || !inputMessage.trim()}
+                    style={{
+                      background: 'linear-gradient(45deg, #007bff 0%, #00d4ff 100%)',
+                      border: 'none',
+                      zIndex: 1,
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseOver={(e) => e.currentTarget.style.background = 'linear-gradient(45deg, #0056b3 0%, #00ace6 100%)'}
+                    onMouseOut={(e) => e.currentTarget.style.background = 'linear-gradient(45deg, #007bff 0%, #00d4ff 100%)'}
+                  >
+                    <Send size={20} className="text-white" />
+                  </button>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Enhanced Custom Styles */}
       <style jsx>{`
         @keyframes float {
-          0%, 100% { transform: translateY(0px) rotate(0deg); }
-          33% { transform: translateY(-15px) rotate(1deg); }
-          66% { transform: translateY(-25px) rotate(-1deg); }
+          0% { transform: translateY(0px) rotate(0deg); }
+          50% { transform: translateY(-20px) rotate(5deg); }
+          100% { transform: translateY(0px) rotate(0deg); }
         }
-        
+
         @keyframes pulse-glow {
-          0%, 100% { 
-            transform: scale(1); 
-            opacity: 1; 
-            box-shadow: 0 0 5px rgba(34, 197, 94, 0.5);
-          }
-          50% { 
-            transform: scale(1.3); 
-            opacity: 0.8; 
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.8);
-          }
+          0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.7); }
+          70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
         }
-        
+
         .pulse-glow {
           animation: pulse-glow 2s infinite;
         }
-        
-        .typing-indicator-advanced {
-          display: flex;
-          gap: 6px;
-          padding: 12px 0;
-        }
-        
-        .typing-indicator-advanced span {
-          width: 10px;
-          height: 10px;
+
+        .typing-indicator span {
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          background-color: #999;
           border-radius: 50%;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          animation: typing-advanced 1.6s infinite ease-in-out;
+          margin: 0 2px;
+          animation: bounce 0.6s infinite alternate;
         }
-        
-        .typing-indicator-advanced span:nth-child(1) {
-          animation-delay: -0.32s;
+
+        .typing-indicator span:nth-child(2) {
+          animation-delay: 0.2s;
         }
-        
-        .typing-indicator-advanced span:nth-child(2) {
-          animation-delay: -0.16s;
+
+        .typing-indicator span:nth-child(3) {
+          animation-delay: 0.4s;
         }
-        
-        .typing-indicator-advanced span:nth-child(3) {
-          animation-delay: 0s;
-        }
-        
-        @keyframes typing-advanced {
-          0%, 80%, 100% {
+
+        @keyframes bounce {
+          from {
             transform: translateY(0);
           }
-          40% {
-            transform: translateY(-8px);
+          to {
+            transform: translateY(-5px);
           }
         }
 
-        .bot-message {
-          background: rgba(255,255,255,0.95) !important;
-          backdrop-filter: blur(15px);
+        .modal {
+          animation: fadeIn 0.3s ease-out;
         }
 
-        .user-message {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
         }
 
-        .bot-avatar {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .modal-content {
+          animation: slideIn 0.3s ease-out;
         }
 
-        /* Mobile-First Responsive Design */
-        @media (max-width: 576px) {
-          .navbar-brand div {
-            font-size: 16px !important;
-          }
-          
-          .modal-dialog {
-            margin: 0.5rem;
-          }
-          
-          .card-body {
-            padding: 1rem !important;
-          }
-          
-          .btn {
-            font-size: 12px !important;
-            padding: 0.5rem 1rem !important;
-          }
-          
-          .form-control {
-            font-size: 14px !important;
-          }
-          
-          .message-card {
-            border-radius: 12px !important;
-          }
-          
-          .input-group {
-            border-radius: 15px !important;
-          }
-          
-          .bot-avatar, .user-avatar {
-            padding: 0.5rem !important;
-          }
-        }
-
-        @media (max-width: 768px) {
-          .navbar-brand div {
-            font-size: 18px !important;
-          }
-          
-          .modal-dialog {
-            margin: 1rem;
-          }
-          
-          .btn {
-            font-size: 13px !important;
-          }
-          
-          .quick-actions .btn {
-            margin-bottom: 0.5rem;
-          }
-          
-          .system-indicators {
-            flex-direction: column;
-            gap: 0.5rem;
-          }
-          
-          .message-timestamp {
-            font-size: 10px !important;
-          }
-        }
-
-        /* Touch-friendly buttons */
-        @media (hover: none) and (pointer: coarse) {
-          .btn {
-            min-height: 44px;
-            min-width: 44px;
-          }
-          
-          .form-control {
-            min-height: 44px;
-          }
-          
-          .input-group .btn {
-            min-width: 60px;
-          }
-        }
-
-        /* Landscape phone optimization */
-        @media (max-width: 896px) and (orientation: landscape) {
-          .modal-dialog {
-            max-height: 90vh;
-            overflow-y: auto;
-          }
-          
-          .navbar {
-            padding: 0.25rem 0 !important;
-          }
-          
-          .chat-area {
-            height: calc(100vh - 60px) !important;
-          }
+        @keyframes slideIn {
+          from { transform: translateY(20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
         }
       `}</style>
     </div>
