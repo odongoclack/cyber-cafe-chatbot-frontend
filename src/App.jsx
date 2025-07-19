@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, User, Bot, Clock, Wifi, Coffee, Users, MessageCircle, Star, Shield, Headphones, Zap, Globe, Monitor, Gamepad2, Printer, BookOpen, Phone, Mail, MapPin, Award, TrendingUp, Activity, Usb, Cable, Smartphone } from 'lucide-react';
+import { Send, User, Bot, Clock, Wifi, Coffee, Users, MessageCircle, Star, Shield, Headphones, Zap, Globe, Monitor, Gamepad2, Printer, BookOpen, Phone, Mail, MapPin, Award, TrendingUp, Activity, Usb, Cable, Smartphone, Settings, BarChart3 } from 'lucide-react';
 
 const App = () => {
   const [messages, setMessages] = useState([
@@ -24,6 +24,11 @@ const App = () => {
     satisfaction: 98
   });
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [conversationId, setConversationId] = useState('');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [showAdminLogin, setShowAdminLogin] = useState(false);
+  const [showAdminDashboard, setShowAdminDashboard] = useState(false);
+  const [adminData, setAdminData] = useState(null);
 
   const messagesEndRef = useRef(null);
 
@@ -42,6 +47,11 @@ const App = () => {
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    // Generate unique conversation ID
+    setConversationId(`conv_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   }, []);
 
   useEffect(() => {
@@ -65,13 +75,63 @@ const App = () => {
     return () => clearInterval(pulseInterval);
   }, []);
 
+  const handleAdminLogin = async () => {
+    try {
+      const response = await fetch('http://localhost:8000/api/admin/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: userName
+        }),
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        setIsAdmin(true);
+        setShowAdminLogin(false);
+        setShowNameModal(false);
+        setMessages(prev => [...prev, {
+          id: prev.length + 1,
+          text: `🔐 Admin Access Granted! Welcome back, ${userName}. You now have access to enhanced business insights and analytics. Type 'admin dashboard' to view system analytics.`,
+          sender: 'bot',
+          timestamp: new Date().toLocaleTimeString(),
+          typing: false
+        }]);
+      } else {
+        alert('Access denied. Admin credentials required.');
+      }
+    } catch (error) {
+      console.error('Admin login error:', error);
+      alert('Connection error. Please try again.');
+    }
+  };
+
+  const fetchAdminDashboard = async () => {
+    try {
+      const response = await fetch(`http://localhost:8000/api/admin/dashboard?username=${userName}`);
+      const data = await response.json();
+      setAdminData(data);
+      setShowAdminDashboard(true);
+    } catch (error) {
+      console.error('Dashboard fetch error:', error);
+    }
+  };
+
   const handleNameSubmit = (e) => {
     e.preventDefault();
     if (userName.trim()) {
+      // Check if admin username
+      if (userName.toLowerCase() === 'edwin123' || userName.toLowerCase() === 'clacks123') {
+        setShowAdminLogin(true);
+        return;
+      }
+      
       setShowNameModal(false);
       setMessages(prev => [...prev, {
         id: prev.length + 1,
-        text: `🎉 Hello ${userName}! Welcome to E-C Digital Hub's premium experience! I'm your dedicated AI assistant, equipped with advanced local knowledge, ready to provide you with lightning-fast support. Whether you need information about our cutting-edge services, competitive rates, or want to make a booking - I'm here 24/7, even without an API key!`,
+        text: `🎉 Hello ${userName}! Welcome to E-C Digital Hub's premium experience! I'm your dedicated Virtual assistant, equipped with advanced local knowledge, ready to provide you with lightning-fast support. Whether you need information about our cutting-edge services, competitive rates, or want to make a booking - I'm here 24/7!`,
         sender: 'bot',
         timestamp: new Date().toLocaleTimeString(),
         typing: false
@@ -92,8 +152,16 @@ const App = () => {
     };
 
     setMessages(prev => [...prev, userMessage]);
+    const currentMessage = inputMessage;
     setInputMessage('');
     setIsTyping(true);
+
+    // Check for admin dashboard command
+    if (isAdmin && currentMessage.toLowerCase().includes('admin dashboard')) {
+      await fetchAdminDashboard();
+      setIsTyping(false);
+      return;
+    }
 
     // API call to FastAPI backend
     try {
@@ -103,9 +171,9 @@ const App = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: inputMessage,
+          message: currentMessage,
           user_name: userName,
-          conversation_id: 'session_' + Date.now()
+          conversation_id: conversationId
         }),
       });
 
@@ -116,7 +184,7 @@ const App = () => {
           setIsTyping(false);
           setMessages(prev => [...prev, {
             id: prev.length + 1,
-            text: data.response || getIntelligentResponse(inputMessage),
+            text: data.response || getIntelligentResponse(currentMessage),
             sender: 'bot',
             timestamp: new Date().toLocaleTimeString(),
             typing: false
@@ -133,7 +201,7 @@ const App = () => {
         setIsTyping(false);
         setMessages(prev => [...prev, {
           id: prev.length + 1,
-          text: getIntelligentResponse(inputMessage),
+          text: getIntelligentResponse(currentMessage),
           sender: 'bot',
           timestamp: new Date().toLocaleTimeString(),
           typing: false
@@ -245,6 +313,149 @@ const App = () => {
              }}></div>
       </div>
 
+      {/* Admin Login Modal */}
+      {showAdminLogin && (
+        <div className="modal d-flex align-items-center justify-content-center" 
+             style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(15px)', zIndex: 1050}}>
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content border-0 shadow-lg" style={{borderRadius: '25px', overflow: 'hidden'}}>
+              <div className="modal-header text-white position-relative p-0" 
+                   style={{background: 'linear-gradient(135deg, #dc3545 0%, #fd7e14 100%)', minHeight: '100px'}}>
+                <div className="container-fluid p-4">
+                  <h4 className="modal-title fw-bold mb-2 d-flex align-items-center">
+                    <Shield className="me-3" size={32} />
+                    Admin Access Required
+                  </h4>
+                  <p className="mb-0 opacity-90">Restricted Area - Business Owners Only</p>
+                </div>
+              </div>
+              
+              <div className="modal-body p-4">
+                <div className="text-center mb-4">
+                  <div className="alert alert-warning d-flex align-items-center">
+                    <Settings className="me-2" size={20} />
+                    <span>Detected admin username: <strong>{userName}</strong></span>
+                  </div>
+                </div>
+                
+                <div className="d-grid gap-2">
+                  <button 
+                    onClick={handleAdminLogin}
+                    className="btn btn-danger btn-lg fw-bold"
+                    style={{borderRadius: '15px'}}
+                  >
+                    <Shield size={20} className="me-2" />
+                    Confirm Admin Access
+                  </button>
+                  <button 
+                    onClick={() => {setShowAdminLogin(false); setShowNameModal(true);}}
+                    className="btn btn-outline-secondary"
+                    style={{borderRadius: '15px'}}
+                  >
+                    Back to Regular Access
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Admin Dashboard Modal */}
+      {showAdminDashboard && adminData && (
+        <div className="modal d-flex align-items-center justify-content-center" 
+             style={{display: 'block', backgroundColor: 'rgba(0,0,0,0.8)', backdropFilter: 'blur(15px)', zIndex: 1050}}>
+          <div className="modal-dialog modal-dialog-centered modal-lg">
+            <div className="modal-content border-0 shadow-lg" style={{borderRadius: '25px', overflow: 'hidden'}}>
+              <div className="modal-header text-white position-relative p-0" 
+                   style={{background: 'linear-gradient(135deg, #28a745 0%, #20c997 100%)', minHeight: '100px'}}>
+                <div className="container-fluid p-4">
+                  <h4 className="modal-title fw-bold mb-2 d-flex align-items-center">
+                    <BarChart3 className="me-3" size={32} />
+                    Admin Dashboard
+                  </h4>
+                  <p className="mb-0 opacity-90">Business Analytics & Insights</p>
+                </div>
+                <button 
+                  onClick={() => setShowAdminDashboard(false)}
+                  className="btn-close btn-close-white position-absolute top-0 end-0 m-3"
+                ></button>
+              </div>
+              
+              <div className="modal-body p-4" style={{maxHeight: '70vh', overflowY: 'auto'}}>
+                <div className="row g-3 mb-4">
+                  <div className="col-md-3 col-6">
+                    <div className="card bg-primary text-white">
+                      <div className="card-body text-center">
+                        <h3 className="mb-1">{adminData.overview.total_conversations}</h3>
+                        <small>Total Conversations</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3 col-6">
+                    <div className="card bg-success text-white">
+                      <div className="card-body text-center">
+                        <h3 className="mb-1">{adminData.overview.total_messages}</h3>
+                        <small>Total Messages</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3 col-6">
+                    <div className="card bg-warning text-white">
+                      <div className="card-body text-center">
+                        <h3 className="mb-1">{adminData.overview.recent_conversations}</h3>
+                        <small>This Week</small>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-3 col-6">
+                    <div className="card bg-info text-white">
+                      <div className="card-body text-center">
+                        <h3 className="mb-1">{adminData.overview.recent_messages}</h3>
+                        <small>Recent Messages</small>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="row">
+                  <div className="col-md-6">
+                    <div className="card">
+                      <div className="card-header">
+                        <h6 className="mb-0">Top Active Users</h6>
+                      </div>
+                      <div className="card-body">
+                        {adminData.active_users.slice(0, 5).map((user, index) => (
+                          <div key={index} className="d-flex justify-content-between align-items-center mb-2">
+                            <span>{user.name}</span>
+                            <span className="badge bg-secondary">{user.messages} msgs</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="col-md-6">
+                    <div className="card">
+                      <div className="card-header">
+                        <h6 className="mb-0">Daily Activity (Last 7 Days)</h6>
+                      </div>
+                      <div className="card-body">
+                        {adminData.daily_activity.slice(0, 7).map((day, index) => (
+                          <div key={index} className="d-flex justify-content-between align-items-center mb-2">
+                            <span>{new Date(day.date).toLocaleDateString()}</span>
+                            <span className="badge bg-primary">{day.messages} msgs</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Enhanced Name Modal */}
       {showNameModal && (
         <div className="modal d-flex align-items-center justify-content-center" 
@@ -315,7 +526,7 @@ const App = () => {
                           className="form-control form-control-lg shadow-sm border-0"
                           value={userName}
                           onChange={(e) => setUserName(e.target.value)}
-                          placeholder="Enter your name..."
+                          placeholder="Enter your name please.."
                           style={{
                             borderRadius: '20px', 
                             backgroundColor: 'white',
@@ -366,7 +577,9 @@ const App = () => {
                   </div>
                   <div>
                     <div style={{fontSize: isMobile ? '18px' : '24px'}}>E-C Digital Hub</div>
-                    <small className="fw-normal opacity-90" style={{fontSize: isMobile ? '10px' : '12px'}}>AI-Powered Assistant</small>
+                    <small className="fw-normal opacity-90" style={{fontSize: isMobile ? '10px' : '12px'}}>
+                      AI-Powered Assistant {isAdmin && '(Admin Mode)'}
+                    </small>
                   </div>
                 </div>
                 
@@ -388,9 +601,18 @@ const App = () => {
                       </div>
                       
                       <div className="d-flex align-items-center bg-white bg-opacity-15 rounded-pill px-3 py-2">
-                        <Star size={18} className="me-1 text-warning" />
-                        <span className="fw-bold">4.9</span>
-                        <small className="ms-1 opacity-90">/5</small>
+                        {isAdmin ? (
+                          <>
+                            <Shield size={18} className="me-1 text-warning" />
+                            <span className="fw-bold text-warning">Admin</span>
+                          </>
+                        ) : (
+                          <>
+                            <Star size={18} className="me-1 text-warning" />
+                            <span className="fw-bold">4.9</span>
+                            <small className="ms-1 opacity-90">/5</small>
+                          </>
+                        )}
                       </div>
                     </>
                   )}
@@ -450,6 +672,19 @@ const App = () => {
                               </div>
                             ))}
                           </div>
+                          
+                          {isAdmin && (
+                            <div className="mt-4 pt-3 border-top">
+                              <button
+                                className="btn btn-warning w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center"
+                                style={{borderRadius: '15px'}}
+                                onClick={() => setInputMessage('admin dashboard')}
+                              >
+                                <BarChart3 size={20} className="me-2" />
+                                View Admin Dashboard
+                              </button>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -524,7 +759,7 @@ const App = () => {
                                 <span></span>
                                 <span></span>
                               </div>
-                              <small className="text-muted mt-2 d-block">AI is thinking...</small>
+                              <small className="text-muted mt-2 d-block">Wait for response from E-C cyber...</small>
                             </div>
                           </div>
                         </div>
@@ -606,7 +841,7 @@ const App = () => {
                       <div className="col-md-4 mb-2">
                         <small className="text-white d-flex align-items-center opacity-90">
                           <Zap size={16} className="me-2" />
-                          Instant responses
+                          Instant responses {isAdmin && '(Admin Mode)'}
                         </small>
                       </div>
                     </>
@@ -676,6 +911,19 @@ const App = () => {
           40% {
             transform: translateY(-8px);
           }
+        }
+
+        .bot-message {
+          background: rgba(255,255,255,0.95) !important;
+          backdrop-filter: blur(15px);
+        }
+
+        .user-message {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        }
+
+        .bot-avatar {
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
 
         /* Mobile-First Responsive Design */
