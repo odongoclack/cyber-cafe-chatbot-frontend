@@ -7,7 +7,7 @@ const App = () => {
   const [messages, setMessages] = useState([
     {
       id: 1,
-      text: "🌟 **Welcome to E-C Digital Hub!** I'm your AI assistant, ready to help with our premium services like high-speed internet, professional printing, and other professional services. What can I do for you today?",
+      text: "🌟 **Welcome to E-C Digital Hub!** I'm your AI assistant by Clacks, ready to help with our premium services like high-speed internet, professional printing, and other professional services. What can I do for you today?",
       sender: 'bot',
       timestamp: new Date().toLocaleTimeString(),
       typing: false
@@ -28,6 +28,9 @@ const App = () => {
 
   const messagesEndRef = useRef(null);
 
+  // Define the backend URL
+  const BACKEND_URL = 'https://cyber-cafe-backend-0t7v.onrender.com';
+
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
@@ -44,7 +47,7 @@ const App = () => {
 
   const handleAdminLogin = async () => {
     try {
-      const response = await fetch('http://localhost:8000/api/admin/login', {
+      const response = await fetch(`${BACKEND_URL}/api/admin/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,7 +78,7 @@ const App = () => {
 
   const fetchAdminDashboard = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/dashboard?username=${encodeURIComponent(userName)}`);
+      const response = await fetch(`${BACKEND_URL}/api/admin/dashboard?username=${encodeURIComponent(userName)}`);
       const data = await response.json();
       if (response.ok) {
         setAdminData(data);
@@ -151,7 +154,7 @@ const App = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:8000/api/chat', {
+      const response = await fetch(`${BACKEND_URL}/api/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -200,7 +203,7 @@ const App = () => {
     e.preventDefault();
     setUpdateMessage('');
     try {
-      const response = await fetch(`http://localhost:8000/api/admin/update-services?username=${encodeURIComponent(userName)}&service_name=${encodeURIComponent(serviceUpdateData.service_name)}&new_info=${encodeURIComponent(serviceUpdateData.new_info)}`, {
+      const response = await fetch(`${BACKEND_URL}/api/admin/update-services?username=${encodeURIComponent(userName)}&service_name=${encodeURIComponent(serviceUpdateData.service_name)}&new_info=${encodeURIComponent(serviceUpdateData.new_info)}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
